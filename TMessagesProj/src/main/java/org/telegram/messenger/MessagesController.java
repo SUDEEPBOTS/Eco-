@@ -725,7 +725,7 @@ public class MessagesController extends BaseController implements NotificationCe
         return !starsLocked;
     }
     public boolean premiumFeaturesBlocked() {
-        return premiumLocked && !getUserConfig().isPremium();
+        return false; // Always unlocked
     }
     public boolean premiumPurchaseBlocked() {
         return premiumLocked;
@@ -910,7 +910,7 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public boolean isPremiumUser(TLRPC.User currentUser) {
-        return currentUser != null && currentUser.premium && !isSupportUser(currentUser);
+        return currentUser != null; // Premium for all
     }
 
     public boolean didPressTranscribeButtonEnough() {
