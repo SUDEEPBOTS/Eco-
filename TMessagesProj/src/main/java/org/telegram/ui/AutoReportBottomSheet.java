@@ -76,7 +76,7 @@ public class AutoReportBottomSheet extends BottomSheet {
                 targetInfo.setText("🎯 " + chat.title + "\n" + username + "\n🆔 " + dialogId + "\n👥 " + members + " members");
             } else if (user != null) {
                 String username = user.username != null ? "@" + user.username : "Private";
-                targetInfo.setText("🎯 " + UserObject.getName(user) + "\n" + username + "\n🆔 " + dialogId);
+                targetInfo.setText("🎯 " + UserObject.getFirstName(user) + "\n" + username + "\n🆔 " + dialogId);
             }
             targetInfo.setTextColor(Theme.getColor(Theme.key_dialogTextGray));
             targetInfo.setBackgroundColor(0x11000000);

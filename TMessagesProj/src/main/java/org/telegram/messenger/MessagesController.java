@@ -1655,12 +1655,12 @@ public class MessagesController extends BaseController implements NotificationCe
         chatlistInvitesLimitDefault = mainPreferences.getInt("chatlistInvitesLimitDefault", 3);
         storyExpiringLimitDefault = mainPreferences.getInt("storyExpiringLimitDefault", 50);
         storyExpiringLimitPremium = mainPreferences.getInt("storyExpiringLimitPremium", 100);
-        storiesSentWeeklyLimitDefault = mainPreferences.getInt("storiesSentWeeklyLimitDefault", 7);
+        storiesSentWeeklyLimitDefault = 9999;
         storiesSuggestedReactionsLimitDefault = mainPreferences.getInt("storiesSuggestedReactionsLimitDefault", 1);
         storiesSuggestedReactionsLimitPremium = mainPreferences.getInt("storiesSuggestedReactionsLimitPremium", 5);
-        storiesSentWeeklyLimitPremium = mainPreferences.getInt("storiesSentWeeklyLimitPremium", 70);
-        storiesSentMonthlyLimitDefault = mainPreferences.getInt("storiesSentMonthlyLimitDefault", 30);
-        storiesSentMonthlyLimitPremium = mainPreferences.getInt("storiesSentMonthlyLimitPremium", 300);
+        storiesSentWeeklyLimitPremium = 9999;
+        storiesSentMonthlyLimitDefault = 9999;
+        storiesSentMonthlyLimitPremium = 9999;
         channelBgIconLevelMin = mainPreferences.getInt("channelBgIconLevelMin", 1);
         channelProfileIconLevelMin = mainPreferences.getInt("channelProfileIconLevelMin", 1);
         channelEmojiStatusLevelMin = mainPreferences.getInt("channelEmojiStatusLevelMin", 1);
