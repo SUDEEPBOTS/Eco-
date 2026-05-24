@@ -13338,6 +13338,12 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         ItemOptions io = ItemOptions.makeOptions(this, optionsItem);
         io.setColors(getThemedColor(Theme.key_actionBarDefaultTitle), getThemedColor(Theme.key_actionBarDefaultTitle));
         io.setDimAlpha(0x08);
+        boolean ghostEnabled = org.telegram.messenger.GhostMode.isEnabled(currentAccount);
+        io.add(ghostEnabled ? R.drawable.msg_secret : R.drawable.msg_secret, ghostEnabled ? "👻 Ghost Mode: ON" : "👻 Ghost Mode: OFF", () -> {
+            boolean current = org.telegram.messenger.GhostMode.isEnabled(currentAccount);
+            org.telegram.messenger.GhostMode.setEnabled(currentAccount, !current);
+            android.widget.Toast.makeText(getParentActivity(), !current ? "👻 Ghost Mode ON" : "Ghost Mode OFF", android.widget.Toast.LENGTH_SHORT).show();
+        });
         io.add(R.drawable.msg_report, "Report Settings", () -> {
             AutoReportBottomSheet sheet = new AutoReportBottomSheet(getParentActivity(), currentAccount, 0);
             sheet.show();
