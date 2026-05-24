@@ -18176,6 +18176,12 @@ public class MessagesController extends BaseController implements NotificationCe
             } else if (baseUpdate instanceof TLRPC.TL_updateDeleteMessages) {
                 TLRPC.TL_updateDeleteMessages update = (TLRPC.TL_updateDeleteMessages) baseUpdate;
                 if (deletedMessages == null) {
+                // Anti-Delete: check karo kisi chat mein enabled hai
+                if (org.telegram.messenger.AntiDelete.isAnyEnabled()) {
+                    // Messages save karo delete hone se pehle
+                    org.telegram.messenger.AntiDelete.saveMessages(currentAccount, update.messages);
+                    return true; // Delete block karo
+                }
                     deletedMessages = new LongSparseArray<>();
                 }
                 ArrayList<Integer> arrayList = deletedMessages.get(0);
