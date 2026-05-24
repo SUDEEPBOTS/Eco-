@@ -264,7 +264,7 @@ public class AutoReportBottomSheet extends BottomSheet {
         req.option = selectedReportOption;
         req.message = TextUtils.isEmpty(savedComment) ? selectedReportType : savedComment;
 
-        ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
+        org.telegram.messenger.ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
             completedCount++;
             progressText.setText(completedCount + "/" + reportCount);
             progressBar.setProgress(completedCount);

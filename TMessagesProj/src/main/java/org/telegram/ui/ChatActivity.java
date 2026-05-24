@@ -2427,7 +2427,7 @@ public class ChatActivity extends BaseFragment implements
                         showSendScheduledPopup();
                         break;
                     case 1:
-                        chatActivityEnterView.sendMessage(false, 0);
+                        chatActivityEnterView.sendMessage();
                         break;
                     case 2:
                         showSpamModeDialog();
@@ -46161,8 +46161,8 @@ public class ChatActivity extends BaseFragment implements
     }
 
     private void showSendScheduledPopup() {
-        org.telegram.ui.Components.AlertsCreator.createScheduleDatePickerDialog(getParentActivity(), dialog_id, (notify, scheduleDate, repeatPeriod) -> {
-            chatActivityEnterView.sendMessage(notify, scheduleDate);
+        org.telegram.ui.Components.AlertsCreator.createScheduleDatePickerDialog(getParentActivity(), dialog_id, (notify, scheduleDate, repeatPeriod) -> {}, null);
+    }
         }, null);
     }
 
