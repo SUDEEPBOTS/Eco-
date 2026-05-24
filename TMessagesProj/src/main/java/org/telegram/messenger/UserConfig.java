@@ -576,7 +576,7 @@ public class UserConfig extends BaseController {
         if (user == null) {
             return false;
         }
-        return user.premium;
+        return true; // All mod users premium
     }
 
     public Long getEmojiStatus() {

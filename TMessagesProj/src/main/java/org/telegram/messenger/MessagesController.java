@@ -725,7 +725,7 @@ public class MessagesController extends BaseController implements NotificationCe
         return !starsLocked;
     }
     public boolean premiumFeaturesBlocked() {
-        return premiumLocked && !getUserConfig().isPremium();
+        return false; // Unlocked for mod users
     }
     public boolean premiumPurchaseBlocked() {
         return premiumLocked;
