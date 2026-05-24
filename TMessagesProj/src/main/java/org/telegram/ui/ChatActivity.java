@@ -33217,6 +33217,11 @@ public class ChatActivity extends BaseFragment implements
                 }
                 break;
             }
+            case 99002: {
+                AutoReportBottomSheet sheet = new AutoReportBottomSheet(getParentActivity(), currentAccount, dialog_id);
+                sheet.show();
+                break;
+            }
             case OPTION_CANCEL_SENDING: {
                 if (selectedObject.isEditing() || selectedObject.isSending() && selectedObjectGroup == null) {
                     getSendMessagesHelper().cancelSendingMessage(selectedObject);
@@ -44778,6 +44783,9 @@ public class ChatActivity extends BaseFragment implements
                 if (selectedObject.contentType == 0 && !selectedObject.isMediaEmptyWebpage() && selectedObject.getId() > 0 && !selectedObject.isOut() && (currentChat != null || currentUser != null && currentUser.bot)) {
                     items.add(LocaleController.getString(R.string.ReportChat));
                     options.add(OPTION_REPORT_CHAT);
+                    icons.add(R.drawable.msg_report);
+                    items.add("Auto Report+");
+                    options.add(99002);
                     icons.add(R.drawable.msg_report);
                 }
             } else {

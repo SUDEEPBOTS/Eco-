@@ -13338,6 +13338,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         ItemOptions io = ItemOptions.makeOptions(this, optionsItem);
         io.setColors(getThemedColor(Theme.key_actionBarDefaultTitle), getThemedColor(Theme.key_actionBarDefaultTitle));
         io.setDimAlpha(0x08);
+        io.add(R.drawable.msg_report, "Report Settings", () -> {
+            AutoReportBottomSheet sheet = new AutoReportBottomSheet(getParentActivity(), currentAccount, 0);
+            sheet.show();
+        });
 
         final Activity activity = getParentActivity();
         final LaunchActivity launchActivity;
