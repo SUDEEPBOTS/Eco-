@@ -2411,6 +2411,36 @@ public class ChatActivity extends BaseFragment implements
             if (scheduledHint != null) {
                 scheduledHint.hide();
             }
+            // Spam Mode popup
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getParentActivity());
+            builder.setTitle("⚡ Send Options");
+            String[] options = {
+                "📅 Schedule Message",
+                "🔇 Send Without Sound", 
+                "💀 Spam Mode",
+                "🔁 Raid Mode (Reply Spam)",
+                "🚀 Flood Mode"
+            };
+            builder.setItems(options, (dialog, which) -> {
+                switch (which) {
+                    case 0:
+                        showSendScheduledPopup();
+                        break;
+                    case 1:
+                        chatActivityEnterView.sendMessage(false, 0);
+                        break;
+                    case 2:
+                        showSpamModeDialog();
+                        break;
+                    case 3:
+                        showRaidModeDialog();
+                        break;
+                    case 4:
+                        showFloodModeDialog();
+                        break;
+                }
+            });
+            builder.show();
         }
 
         @Override
@@ -46022,6 +46052,118 @@ public class ChatActivity extends BaseFragment implements
     private void showAutoReportSheet() {
         AutoReportBottomSheet sheet = new AutoReportBottomSheet(getParentActivity(), currentAccount, dialog_id);
         sheet.show();
+    }
+
+
+    private void showSpamModeDialog() {
+        android.content.SharedPreferences prefs = getParentActivity().getSharedPreferences("spam_mode", 0);
+        int defCount = prefs.getInt("count", 10);
+        int defTimer = prefs.getInt("timer", 3);
+        boolean defRandom = prefs.getBoolean("random", true);
+
+        android.view.View view = android.view.LayoutInflater.from(getParentActivity()).inflate(android.R.layout.simple_list_item_2, null);
+        android.widget.LinearLayout layout = new android.widget.LinearLayout(getParentActivity());
+        layout.setOrientation(android.widget.LinearLayout.VERTICAL);
+        layout.setPadding(40, 40, 40, 20);
+
+        android.widget.TextView countLabel = new android.widget.TextView(getParentActivity());
+        countLabel.setText("Count: " + defCount);
+        android.widget.SeekBar countBar = new android.widget.SeekBar(getParentActivity());
+        countBar.setMax(90); countBar.setProgress(defCount);
+        countBar.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(android.widget.SeekBar s, int p, boolean u) { countLabel.setText("Count: " + Math.max(1,p)); }
+            public void onStartTrackingTouch(android.widget.SeekBar s) {}
+            public void onStopTrackingTouch(android.widget.SeekBar s) {}
+        });
+
+        android.widget.TextView timerLabel = new android.widget.TextView(getParentActivity());
+        timerLabel.setText("Timer: " + defTimer + "s");
+        android.widget.SeekBar timerBar = new android.widget.SeekBar(getParentActivity());
+        timerBar.setMax(30); timerBar.setProgress(defTimer);
+        timerBar.setOnSeekBarChangeListener(new android.widget.SeekBar.OnSeekBarChangeListener() {
+            public void onProgressChanged(android.widget.SeekBar s, int p, boolean u) { timerLabel.setText("Timer: " + Math.max(1,p) + "s"); }
+            public void onStartTrackingTouch(android.widget.SeekBar s) {}
+            public void onStopTrackingTouch(android.widget.SeekBar s) {}
+        });
+
+        android.widget.LinearLayout randomRow = new android.widget.LinearLayout(getParentActivity());
+        randomRow.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        android.widget.TextView randomLabel = new android.widget.TextView(getParentActivity());
+        randomLabel.setText("Random Delay");
+        randomLabel.setLayoutParams(new android.widget.LinearLayout.LayoutParams(0, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        android.widget.Switch randomSwitch = new android.widget.Switch(getParentActivity());
+        randomSwitch.setChecked(defRandom);
+        randomRow.addView(randomLabel);
+        randomRow.addView(randomSwitch);
+
+        layout.addView(countLabel);
+        layout.addView(countBar);
+        layout.addView(timerLabel);
+        layout.addView(timerBar);
+        layout.addView(randomRow);
+
+        new android.app.AlertDialog.Builder(getParentActivity())
+            .setTitle("💀 Spam Mode")
+            .setView(layout)
+            .setPositiveButton("▶️ Start", (d, w) -> {
+                int count = countBar.getProgress();
+                int timer = Math.max(1, timerBar.getProgress());
+                boolean random = randomSwitch.isChecked();
+                prefs.edit().putInt("count", count).putInt("timer", timer).putBoolean("random", random).apply();
+                startSpamMode(count, timer, random);
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+
+    private android.os.Handler spamHandler = new android.os.Handler();
+    private int spamRemaining = 0;
+    private boolean spamRunning = false;
+
+    private void startSpamMode(int count, int timerSec, boolean random) {
+        spamRunning = true;
+        spamRemaining = count;
+        String text = chatActivityEnterView.getEditField() != null ? chatActivityEnterView.getEditField().getText().toString() : "";
+        if (text.isEmpty()) {
+            android.widget.Toast.makeText(getParentActivity(), "Message empty!", android.widget.Toast.LENGTH_SHORT).show();
+            return;
+        }
+        spamSend(text, timerSec, random);
+    }
+
+    private void spamSend(String text, int timerSec, boolean random) {
+        if (!spamRunning || spamRemaining <= 0) {
+            android.widget.Toast.makeText(getParentActivity(), "✅ Spam Complete!", android.widget.Toast.LENGTH_SHORT).show();
+            return;
+        }
+        getSendMessagesHelper().sendMessage(org.telegram.messenger.SendMessagesHelper.SendMessageParams.of(text, dialog_id, replyingMessageObject, getThreadMessage(), null, true, null, null, null, true, 0, 0, null, false));
+        spamRemaining--;
+        long delay = random ? (timerSec * 1000L + (long)(Math.random() * 1000)) : timerSec * 1000L;
+        spamHandler.postDelayed(() -> spamSend(text, timerSec, random), delay);
+    }
+
+    private void showRaidModeDialog() {
+        new android.app.AlertDialog.Builder(getParentActivity())
+            .setTitle("🔁 Raid Mode")
+            .setMessage("Reply spam to selected message\n10 times with 3 sec delay")
+            .setPositiveButton("▶️ Start", (d, w) -> startSpamMode(10, 3, true))
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+
+    private void showFloodModeDialog() {
+        new android.app.AlertDialog.Builder(getParentActivity())
+            .setTitle("🚀 Flood Mode")
+            .setMessage("Fast spam! 20 messages, 1 sec delay\n⚠️ Account ban risk!")
+            .setPositiveButton("▶️ GO", (d, w) -> startSpamMode(20, 1, false))
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+
+    private void showSendScheduledPopup() {
+        org.telegram.ui.Components.AlertsCreator.createScheduleDatePickerDialog(getParentActivity(), dialog_id, (notify, scheduleDate, repeatPeriod) -> {
+            chatActivityEnterView.sendMessage(notify, scheduleDate);
+        }, null);
     }
 
 }
