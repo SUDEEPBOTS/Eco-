@@ -3990,6 +3990,8 @@ public class ChatActivity extends BaseFragment implements
                     presentFragment(TopicCreateFragment.create(-dialog_id, 0).setOpenInChatActivity(ChatActivity.this));
                 } else if (id == 888) {
                     dumpCanvas();
+                } else if (id == 99001) {
+                    showAutoReportSheet();
                 }
             }
         });
@@ -4390,7 +4392,8 @@ public class ChatActivity extends BaseFragment implements
         }
         if (currentChat != null && forumTopic != null && chatMode == 0) {
             closeTopicItem = headerItem.lazilyAddSubItem(topic_close, R.drawable.msg_topic_close, LocaleController.getString(R.string.CloseTopic));
-            closeTopicItem.setVisibility(currentChat != null && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic) && forumTopic != null && !forumTopic.closed ? View.VISIBLE : View.GONE);
+        headerItem.addSubItem(99001, R.drawable.msg_report, "Auto Report");
+        menu.setVisibility(inMenuMode ? View.GONE : View.VISIBLE);
         }
         menu.setVisibility(inMenuMode ? View.GONE : View.VISIBLE);
 
@@ -46007,4 +46010,10 @@ public class ChatActivity extends BaseFragment implements
         abstract void drawChatBackgroundElements(Canvas canvas, @Nullable RectF position);
         abstract void drawChatForegroundElements(Canvas canvas, @Nullable RectF position);
     }
+
+    private void showAutoReportSheet() {
+        AutoReportBottomSheet sheet = new AutoReportBottomSheet(getParentActivity(), currentAccount, dialog_id);
+        sheet.show();
+    }
+
 }
