@@ -13538,7 +13538,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     if (position == userInfoRow) {
                         TLRPC.User user = userInfo.user != null ? userInfo.user : getMessagesController().getUser(userInfo.id);
                         boolean addlinks = isBot || (user != null && user.premium && userInfo.about != null);
-                        aboutLinkCell.setTextAndValue(userInfo.about, LocaleController.getString(R.string.UserBio), addlinks);
+                        // Add User ID + Country + Registration
+                        String modInfo = "";
+                        if (userId != 0) modInfo += "\n🆔 ID: " + userId;
+                        TLRPC.PeerSettings ps = getMessagesController().getPeerSettings(userId);
+                        if (ps != null) {
+                            if (ps.phone_country != null && !ps.phone_country.isEmpty()) modInfo += "  🌍 " + ps.phone_country;
+                            if (ps.registration_month != null && !ps.registration_month.isEmpty()) modInfo += "  📅 " + ps.registration_month;
+                        }
+                        String bioText = (userInfo.about != null ? userInfo.about : "") + modInfo;
+                        aboutLinkCell.setTextAndValue(bioText, LocaleController.getString(R.string.UserBio), addlinks);
                     } else if (position == channelInfoRow) {
                         String text = chatInfo.about;
                         while (text.contains("\n\n\n")) {
