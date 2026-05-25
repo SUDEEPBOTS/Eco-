@@ -13593,9 +13593,19 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     } else if (position == subscribersRow) {
                         if (chatInfo != null) {
                             if (ChatObject.isChannel(currentChat) && !currentChat.megagroup) {
-                                textCell.setTextAndValueAndIcon(LocaleController.getString(R.string.ChannelSubscribers), LocaleController.formatNumber(chatInfo.participants_count, ','), R.drawable.msg_groups, position != membersSectionRow - 1);
+                                textCell.setTextAndValueAndIcon(LocaleController.getString(R.string.ChannelSubscribers), LocaleController.formatNumber(chatInfo.participants_count, ',') + "  |  ID: " + (ChatObject.isChannel(currentChat) ? "-100" + chatId : "-" + chatId), R.drawable.msg_groups, position != membersSectionRow - 1);
                             } else {
-                                textCell.setTextAndValueAndIcon(LocaleController.getString(R.string.ChannelMembers), LocaleController.formatNumber(chatInfo.participants_count, ','), R.drawable.msg_groups, position != membersSectionRow - 1);
+                                String ownerName = "Unknown";
+                                if (chatInfo.participants != null && chatInfo.participants.participants != null) {
+                                    for (TLRPC.ChatParticipant p : chatInfo.participants.participants) {
+                                        if (p instanceof TLRPC.TL_chatParticipantCreator) {
+                                            TLRPC.User ownerUser = getMessagesController().getUser(p.user_id);
+                                            if (ownerUser != null) ownerName = ownerUser.first_name + (ownerUser.last_name != null ? " " + ownerUser.last_name : "") + (ownerUser.username != null ? " (@" + ownerUser.username + ")" : "") + " [" + p.user_id + "]";
+                                            break;
+                                        }
+                                    }
+                                }
+                                textCell.setTextAndValueAndIcon(LocaleController.getString(R.string.ChannelMembers), LocaleController.formatNumber(chatInfo.participants_count, ',') + "  |  ID: -" + chatId + "\nOwner: " + ownerName, R.drawable.msg_groups, position != membersSectionRow - 1);
                             }
                         } else {
                             if (ChatObject.isChannel(currentChat) && !currentChat.megagroup) {

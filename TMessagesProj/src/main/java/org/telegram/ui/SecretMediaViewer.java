@@ -873,12 +873,27 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
         actionBar.setItemsColor(Color.WHITE, false);
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
         actionBar.setTitleRightMargin(dp(70));
+        ActionBarMenu menu = actionBar.createMenu();
+        menu.addItem(1001, R.drawable.msg_download);
         containerView.addView(actionBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
             public void onItemClick(int id) {
                 if (id == -1) {
                     closePhoto(true, false);
+                } else if (id == 1001) {
+                    if (currentMessageObject != null) {
+                        String path = currentMessageObject.messageOwner.attachPath;
+                        if (path == null || path.isEmpty()) {
+                            org.telegram.messenger.FileLoader fl = org.telegram.messenger.FileLoader.getInstance(currentAccount);
+                            java.io.File f = fl.getPathToMessage(currentMessageObject.messageOwner);
+                            if (f != null) path = f.getAbsolutePath();
+                        }
+                        if (path != null && !path.isEmpty()) {
+                            org.telegram.messenger.MediaController.saveFile(path, activity, currentMessageObject.isVideo() ? 1 : 0, null, null, null);
+                            android.widget.Toast.makeText(activity, "Saved to Gallery!", android.widget.Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 }
             }
         });

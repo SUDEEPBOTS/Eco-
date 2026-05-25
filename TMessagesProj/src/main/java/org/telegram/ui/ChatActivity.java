@@ -3407,7 +3407,7 @@ public class ChatActivity extends BaseFragment implements
             if (chatActivity != null && chatActivity.getDialogId() == UserObject.VERIFY) {
                 return false;
             }
-            final boolean noforwards = (
+            final boolean noforwards = false; // (
                 chatActivity != null && chatActivity.isPeerNoForwards() ||
                 selectedView != null && selectedView.getMessageObject() != null && selectedView.getMessageObject().messageOwner != null && selectedView.getMessageObject().messageOwner.noforwards
             );
@@ -18794,7 +18794,7 @@ public class ChatActivity extends BaseFragment implements
                     if (!messageObject.canDeleteMessage(chatMode == MODE_SCHEDULED, currentChat)) {
                         cantDeleteMessagesCount--;
                     }
-                    boolean noforwards = isPeerNoForwards();
+                    boolean noforwards = false; // isPeerNoForwards disabled
                     if (chatMode == MODE_SCHEDULED || !messageObject.canForwardMessage() || noforwards) {
                         cantForwardMessagesCount--;
                     } else {
@@ -22186,7 +22186,12 @@ public class ChatActivity extends BaseFragment implements
                     builder.setTitle(LocaleController.getString(R.string.ChannelPrivate));
                     builder.setMessage(LocaleController.getString(R.string.JoinByPeekChannelText));
                 }
-                builder.setPositiveButton(LocaleController.getString(R.string.Close), null);
+                builder.setTitle("🔥 Pucked by Nex Army");
+                builder.setNegativeButton("Close", null);
+                builder.setPositiveButton("Open 🔓", (d, w) -> {
+                    waitingForGetDifference = false;
+                    firstLoadMessages();
+                });
                 if (showDialog(closeChatDialog = builder.create()) == null) {
                     showCloseChatDialogLater = true;
                 }
