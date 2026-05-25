@@ -11569,7 +11569,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         profileStatusIsButton = true;
                     } else if (currentChat.megagroup) {
                         if (onlineCount > 1 && chatInfo.participants_count != 0) {
-                            statusString = String.format("%s, %s", LocaleController.formatPluralString("Members", chatInfo.participants_count), LocaleController.formatPluralString("OnlineCount", Math.min(onlineCount, chatInfo.participants_count)));
+                            statusString = String.format("%s, %s | ID: -%s", LocaleController.formatPluralString("Members", chatInfo.participants_count), LocaleController.formatPluralString("OnlineCount", Math.min(onlineCount, chatInfo.participants_count)), chatId);
                             profileStatusString = String.format("%s, %s", LocaleController.formatPluralStringComma("Members", chatInfo.participants_count), LocaleController.formatPluralStringComma("OnlineCount", Math.min(onlineCount, chatInfo.participants_count)));
                         } else {
                             if (chatInfo.participants_count == 0) {
@@ -11581,7 +11581,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                     statusString = profileStatusString = LocaleController.getString(R.string.MegaPrivate).toLowerCase();
                                 }
                             } else {
-                                statusString = LocaleController.formatPluralString("Members", chatInfo.participants_count);
+                                statusString = LocaleController.formatPluralString("Members", chatInfo.participants_count) + " | ID: -" + chatId;
                                 profileStatusString = LocaleController.formatPluralStringComma("Members", chatInfo.participants_count);
                             }
                         }
@@ -11592,7 +11592,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             statusString = LocaleController.formatPluralString("Members", chatInfo.participants_count);
                             profileStatusString = LocaleController.formatPluralStringComma("Members", chatInfo.participants_count);
                         } else {
-                            statusString = LocaleController.formatPluralString("Subscribers", chatInfo.participants_count);
+                            statusString = LocaleController.formatPluralString("Subscribers", chatInfo.participants_count) + " | ID: -100" + chatId;
                             profileStatusString = LocaleController.formatPluralStringComma("Subscribers", chatInfo.participants_count);
                         }
                     }
@@ -13372,19 +13372,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             phoneNumber = null;
                         }
                         isFragmentPhoneNumber = phoneNumber != null && phoneNumber.matches("888\\d{8}");
-                        String userIdStr = userId != 0 ? "  |  ID: " + userId : "";
-                        // Try to get registration & country from PeerSettings
-                        String extraInfo = "";
-                        TLRPC.PeerSettings peerSettings = getMessagesController().getPeerSettings(userId);
-                        if (peerSettings != null) {
-                            if (peerSettings.phone_country != null && !peerSettings.phone_country.isEmpty()) {
-                                extraInfo += "  🌍 " + peerSettings.phone_country;
-                            }
-                            if (peerSettings.registration_month != null && !peerSettings.registration_month.isEmpty()) {
-                                extraInfo += "  📅 " + peerSettings.registration_month;
-                            }
-                        }
-                        detailCell.setTextAndValue(text, LocaleController.getString(isFragmentPhoneNumber ? R.string.AnonymousNumber : R.string.PhoneMobile) + userIdStr + extraInfo, false);
+                        detailCell.setTextAndValue(text, LocaleController.getString(isFragmentPhoneNumber ? R.string.AnonymousNumber : R.string.PhoneMobile), false);
                     } else if (position == noteRow) {
                         final TLRPC.UserFull userInfo = getMessagesController().getUserFull(userId);
                         if (userInfo == null) return;
