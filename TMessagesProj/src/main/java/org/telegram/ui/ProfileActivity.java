@@ -611,6 +611,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     public int birthdayRow;
     private int setUsernameRow;
     private int bioRow;
+    private int chatIdRow;
+    private int ownerRow;
     private int phoneSuggestionSectionRow;
     private int graceSuggestionRow;
     private int graceSuggestionSectionRow;
@@ -4648,7 +4650,32 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
             @Override
             public boolean onItemClick(View view, int position) {
-                if (position == versionRow) {
+                                if (position == chatIdRow) {
+                    long id = currentChat != null ? -currentChat.id : userId;
+                    android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getParentActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                    android.content.ClipData clip = android.content.ClipData.newPlainText("Chat ID", String.valueOf(id));
+                    clipboard.setPrimaryClip(clip);
+                    android.widget.Toast.makeText(getParentActivity(), "ID Copied: " + id, android.widget.Toast.LENGTH_SHORT).show();
+                } else if (position == ownerRow) {
+                    if (chatInfo != null && chatInfo.creator_id != 0) {
+                        TLRPC.User owner = getMessagesController().getUser(chatInfo.creator_id);
+                        String ownerInfo = "Owner ID: " + chatInfo.creator_id;
+                        if (owner != null) {
+                            ownerInfo += "\nName: " + UserObject.getName(owner);
+                            if (owner.username != null) ownerInfo += "\n@" + owner.username;
+                        }
+                        final String finalInfo = ownerInfo;
+                        new android.app.AlertDialog.Builder(getParentActivity())
+                            .setTitle("Group Owner")
+                            .setMessage(finalInfo)
+                            .setPositiveButton("Copy ID", (d, w) -> {
+                                android.content.ClipboardManager cb = (android.content.ClipboardManager) getParentActivity().getSystemService(android.content.Context.CLIPBOARD_SERVICE);
+                                cb.setPrimaryClip(android.content.ClipData.newPlainText("Owner ID", String.valueOf(chatInfo.creator_id)));
+                            })
+                            .setNegativeButton("OK", null)
+                            .show();
+                    }
+                } else if (position == versionRow) {
                     pressCount++;
                     if (pressCount >= 2 || BuildVars.DEBUG_PRIVATE_VERSION) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity(), resourcesProvider);
@@ -10788,6 +10815,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 if (chatInfo != null) {
                     if (!TextUtils.isEmpty(chatInfo.about)) {
                         channelInfoRow = rowCount++;
+                    chatIdRow = rowCount++;
+                    ownerRow = rowCount++;
                     }
                     if (chatInfo.location instanceof TLRPC.TL_channelLocation) {
                         locationRow = rowCount++;
