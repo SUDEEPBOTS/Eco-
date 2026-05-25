@@ -2145,6 +2145,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             }
             userInfo = getMessagesController().getUserFull(userId);
             getMessagesController().loadFullUser(getMessagesController().getUser(userId), classGuid, true);
+            getMessagesController().loadPeerSettings(getMessagesController().getUser(userId), null);
             participantsMap = null;
 
             if (UserObject.isUserSelf(user)) {
