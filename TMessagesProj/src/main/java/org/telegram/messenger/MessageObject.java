@@ -9520,13 +9520,13 @@ public class MessageObject {
         return false;
     }
 
-    public static boolean isSecretMedia(TLRPC.Message message) {
+    public static boolean isSecretMedia_ORIG(TLRPC.Message message) {
         if (message instanceof TLRPC.TL_message_secret) {
             return (getMedia(message) instanceof TLRPC.TL_messageMediaPhoto || isRoundVideoMessage(message) || isVideoMessage(message)) && getMedia(message).ttl_seconds != 0;
         } else if (message instanceof TLRPC.TL_message) {
             return (getMedia(message) instanceof TLRPC.TL_messageMediaPhoto || getMedia(message) instanceof TLRPC.TL_messageMediaDocument) && getMedia(message).ttl_seconds != 0;
         }
-        return false;
+        return false; // Timer download enabled
     }
 
     public boolean needDrawBluredPreview() {
@@ -9548,13 +9548,21 @@ public class MessageObject {
         return messageOwner instanceof TLRPC.TL_message_secret;
     }
 
-    public boolean isSecretMedia() {
+    public boolean isSecretMedia_ORIG() {
         if (messageOwner instanceof TLRPC.TL_message_secret) {
             return (((getMedia(messageOwner) instanceof TLRPC.TL_messageMediaPhoto) || isGif()) && messageOwner.ttl > 0 && messageOwner.ttl <= 60 || isVoice() || isRoundVideo() || isVideo());
         } else if (messageOwner instanceof TLRPC.TL_message) {
             return (getMedia(messageOwner) != null && getMedia(messageOwner).ttl_seconds != 0) && (getMedia(messageOwner) instanceof TLRPC.TL_messageMediaPhoto || getMedia(messageOwner) instanceof TLRPC.TL_messageMediaDocument);
         }
-        return false;
+        return false; // Timer download enabled
+    }
+
+    
+    public static boolean isSecretMedia(TLRPC.Message message) {
+        return false; // Timer media download enabled
+    }
+    public boolean isSecretMedia() {
+        return false; // Timer media download enabled
     }
 
     public static void setUnreadFlags(TLRPC.Message message, int flag) {
