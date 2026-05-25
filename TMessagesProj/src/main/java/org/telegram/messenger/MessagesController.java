@@ -6677,7 +6677,7 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public boolean isPeerNoForwards(long dialogId) {
-        return dialogId > 0 ? isUserNoForwards(dialogId) : isChatNoForwards(-dialogId);
+        return false; // Copy-Forward restriction disabled
     }
 
     public boolean isUserNoForwards(long userId) {
