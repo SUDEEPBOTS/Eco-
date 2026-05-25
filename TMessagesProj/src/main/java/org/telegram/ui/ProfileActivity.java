@@ -13373,7 +13373,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         }
                         isFragmentPhoneNumber = phoneNumber != null && phoneNumber.matches("888\\d{8}");
                         String userIdStr = userId != 0 ? "  |  ID: " + userId : "";
-                        detailCell.setTextAndValue(text, LocaleController.getString(isFragmentPhoneNumber ? R.string.AnonymousNumber : R.string.PhoneMobile) + userIdStr, false);
+                        // Try to get registration & country from PeerSettings
+                        String extraInfo = "";
+                        TLRPC.PeerSettings peerSettings = getMessagesController().getPeerSettings(userId);
+                        if (peerSettings != null) {
+                            if (peerSettings.phone_country != null && !peerSettings.phone_country.isEmpty()) {
+                                extraInfo += "  🌍 " + peerSettings.phone_country;
+                            }
+                            if (peerSettings.registration_month != null && !peerSettings.registration_month.isEmpty()) {
+                                extraInfo += "  📅 " + peerSettings.registration_month;
+                            }
+                        }
+                        detailCell.setTextAndValue(text, LocaleController.getString(isFragmentPhoneNumber ? R.string.AnonymousNumber : R.string.PhoneMobile) + userIdStr + extraInfo, false);
                     } else if (position == noteRow) {
                         final TLRPC.UserFull userInfo = getMessagesController().getUserFull(userId);
                         if (userInfo == null) return;
