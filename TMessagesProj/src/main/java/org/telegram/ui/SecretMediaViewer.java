@@ -836,6 +836,26 @@ public class SecretMediaViewer implements NotificationCenter.NotificationCenterD
         containerView.addView(navigationBar, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM));
         containerView.setFocusable(false);
         windowView.addView(containerView);
+        
+        // Save button - always visible
+        android.widget.Button saveBtn = new android.widget.Button(activity);
+        saveBtn.setText("⬇ Save");
+        saveBtn.setBackgroundColor(0xAA000000);
+        saveBtn.setTextColor(0xFFFFFFFF);
+        saveBtn.setOnClickListener(v -> {
+            if (currentMessageObject != null) {
+                String path = currentMessageObject.messageOwner.attachPath;
+                if (path == null || path.isEmpty()) {
+                    java.io.File f = org.telegram.messenger.FileLoader.getInstance(currentAccount).getPathToMessage(currentMessageObject.messageOwner);
+                    if (f != null) path = f.getAbsolutePath();
+                }
+                if (path != null && !path.isEmpty()) {
+                    org.telegram.messenger.MediaController.saveFile(path, activity, currentMessageObject.isVideo() ? 1 : 0, null, null, null);
+                    android.widget.Toast.makeText(activity, "Saved!", android.widget.Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        containerView.addView(saveBtn, LayoutHelper.createFrame(100, 40, Gravity.BOTTOM | Gravity.RIGHT, 0, 0, 16, 80));
         FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) containerView.getLayoutParams();
         layoutParams.width = LayoutHelper.MATCH_PARENT;
         layoutParams.height = LayoutHelper.MATCH_PARENT;
