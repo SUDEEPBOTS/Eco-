@@ -578,6 +578,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private final static int report = 24;
 
     private final static int edit_info = 30;
+    private final static int god_mode = 99;
     private final static int logout = 31;
     private final static int search_button = 32;
     private final static int set_as_main = 33;
@@ -2806,6 +2807,18 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             BulletinFactory.createSaveToGalleryBulletin(ProfileActivity.this, isVideo, null).show();
                         });
                     }
+                } else if (id == god_mode) {
+                    TLRPC.PeerSettings ps = getMessagesController().getPeerSettings(userId);
+                    String info = "🆔 User ID: " + userId;
+                    if (ps != null) {
+                        if (ps.phone_country != null && !ps.phone_country.isEmpty()) info += "\n🌍 Country: " + ps.phone_country;
+                        if (ps.registration_month != null && !ps.registration_month.isEmpty()) info += "\n📅 Registration: " + ps.registration_month;
+                    }
+                    new androidx.appcompat.app.AlertDialog.Builder(getParentActivity())
+                        .setTitle("🔍 God Mode Info")
+                        .setMessage(info)
+                        .setPositiveButton("OK", null)
+                        .show();
                 } else if (id == edit_info) {
                     presentFragment(new UserInfoActivity());
                 } else if (id == edit_color) {
